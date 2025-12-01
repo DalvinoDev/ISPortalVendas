@@ -1,0 +1,9 @@
+Flask
+gunicorn
+gspread
+oauth2client
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+Flask-Limiter
+# pdfkit removed: using HTML preview + client-side print instead of server PDF generation

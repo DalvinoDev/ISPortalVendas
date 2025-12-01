@@ -1,2 +1,1 @@
-# ISPortalVendas
-repositorios publico do codigo
+# meuSiteFlask
