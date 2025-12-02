@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Proposta para Impressão - {{ oportunidade.nome }}</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script src="/static/js/tailwind-config.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
+
+    <style>
+        /* ======================================================= */
+        /* REGRAS GERAIS PARA VISUAL E IMPRESSÃO */
+        /* ======================================================= */
+        .force-print-background {
+            -webkit-print-color-adjust: exact !important; 
+            color-adjust: exact !important;
+        }
+        
+        /* 2. Visualização A4 no Navegador */
+        body {
+            background-color: #f0f0f0; /* Fundo cinza claro para contraste */
+        }
+
+        /* 3. Ajuste do MAIN/A4 no Navegador */
+        .main-a4-wrapper {
+            width: 794px; 
+            margin: 0 auto;
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        /* Estilo base para CADA "FOLHA" de papel */
+        .page-content-box {
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 2rem 3rem; 
+            box-sizing: border-box;
+            width: 100%; 
+            /* Garante que o conteúdo com logo fique alinhado ao topo */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Alinha ao topo */
+            align-items: stretch; /* Ocupa a largura total */
+            text-align: left;
+        }
+        
+        /* Estilo ESPECÍFICO para a capa (página 1) */
+        .proposta-container {
+            height: 1123px; 
+            padding: 0 !important; 
+            margin-top: 0 !important;
+        }
+        
+        /* NOVO: Regra da Logo movida para o escopo global */
+        .page-logo-header {
+            text-align: center;
+            margin-bottom: 2rem; 
+            padding-top: 1rem; 
+        }
+
+        /* NOVO: Regra para zerar a margem do 1º título após a logo */
+        .page-logo-header + .prose h2:first-child {
+            margin-top: 0;
+        }
+
+
+        /* ============== REGRAS ESPECÍFICAS PARA TELA (@media screen) ============== */
+        @media screen {
+            /* Todas as páginas APÓS a primeira devem ter um espaço (gap) */
+            .page-break-before {
+                margin-top: 25px; /* Espaço entre as folhas */
+            }
+            
+            /* Todas as páginas de conteúdo devem ter altura MÍNIMA A4 */
+            .page-content-box {
+                min-height: 1123px; 
+            }
+            
+            /* A primeira página de conteúdo (após a capa) */
+            .prose-content-wrapper .page-content-box:first-child {
+                margin-top: 25px; 
+            }
+        }
+        
+        /* ============== REGRAS ESPECÍFICAS PARA IMPRESSÃO (@media print) ============== */
+        @media print {
+            @page {
+                size: A4;
+                margin: 0cm;
+            }
+            
+            .page-break-before {
+                page-break-before: always;
+                break-before: page; 
+            }
+            
+            /* Impede a quebra de página antes da primeira seção de conteúdo */
+            .prose-content-wrapper .page-content-box:first-child.page-break-before {
+                page-break-before: auto !important;
+                break-before: auto !important;
+            }
+
+            .page-content-box {
+                padding: 1cm !important; 
+                box-shadow: none !important;
+                margin: 0 !important;
+                min-height: 100% !important;
+                background-color: #ffffff !important;
+            }
+            
+            .dark\:prose-invert, .dark\:text-white, .dark\:text-gray-300, .dark\:text-gray-200 {
+                color: #000000 !important;
+            }
+            .dark\:bg-gray-800, .dark\:bg-gray-700\/50, .dark\:bg-gray-700 {
+                background-color: transparent !important;
+            }
+            
+            /* A regra da logo já está no global, não precisa repetir aqui */
+        }
+            /* --- BLOQUEIO DE IMPRESSÃO NÃO AUTORIZADA --- */
+            @media print {
+            body[data-impressao-autorizada="0"] * {
+                visibility: hidden !important;
+            }
+            body[data-impressao-autorizada="0"]::before {
+                content: "IMPRESSÃO BLOQUEADA – USE O BOTÃO OFICIAL";
+                visibility: visible !important;
+                display: block !important;
+                position: fixed;
+                top: 40%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-10deg);
+                font-size: 28px;
+                color: rgba(200,0,0,0.7);
+                font-weight: bold;
+                text-align: center;
+            }
+            }
+    </style>
+</head>
+
+<body 
+  class="font-display text-foreground-light dark:text-foreground-dark min-h-screen py-8"
+  data-impressao-autorizada="{{ '1' if imprimir_agora else '0' }}">
+    <main class="main-a4-wrapper">
+
+        <div class="proposta-container force-print-background page-content-box" style="
+            margin: 0 auto;
+            position: relative; 
+            overflow: hidden; 
+            background-image: url('/static/img/contratoPg1.png'); 
+            background-size: 100% 96.8%; 
+            background-repeat: no-repeat;
+        ">
+            <div style="position: absolute; font-family: 'Inter', sans-serif; font-size: 16px; color: #000000; top: 803px; left: 72px; width: 550px;">
+                {{ oportunidade.nome or "Nome do Cliente" }} 
+            </div>
+            <div style="position: absolute; font-family: 'Inter', sans-serif; font-size: 16px; color: #000000; top: 849px; left: 72px; width: 550px;">
+                {% if cliente and cliente.logradouro %}
+                    {% set rua = cliente.logradouro or "" %}
+                    {% set numero = cliente.numero or "" %}
+                    {% set municipio = cliente.municipio or "" %}
+                    {% set estado = cliente.estado or "" %}
+                    {{ rua }}{% if numero %}, {{ numero }}{% endif %} - {{ municipio }}/{{ estado }}
+                {% elif oportunidade.endereco %}
+                    {{ oportunidade.endereco }}
+                {% else %}
+                    Endereço Não Declarado
+                {% endif %}
+            </div>
+            <div style="position: absolute; font-family: 'Inter', sans-serif; font-size: 16px; color: #000000; top: 903px; left: 72px; width: 450px;">
+                {{ oportunidade.potencia or "0" }} kWh
+            </div>
+        </div>
+        
+        <div class="prose-content-wrapper">
+            
+            <div class="page-content-box page-break-before">
+                <div class="page-logo-header">
+                    <img src="/static/img/contratoImgTop.PNG" alt="Logo da IS Engenharia Solar" class="w-40 mx-auto" />
+                </div>
+{% if debug %}
+<pre style="
+    background:#111;
+    color:#0f0;
+    padding:15px;
+    font-size:12px;
+    overflow:auto;
+">
+OPORTUNIDADE:
+{{ oportunidade | tojson(indent=2) }}
+
+CLIENTE:
+{{ cliente | tojson(indent=2) }}
+</pre>
+{% endif %}
+
+                <div class="prose dark:prose-invert max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-primary mb-8">
+                        QUEM SOMOS?
+                    </h2>
+                    
+                    <div class="text-lg sm:text-xl leading-relaxed text-justify space-y-6">
+                        <p>
+                            A <strong class="font-bold">IS Engenharia Solar</strong> surgiu com a inspiração transformadora de oferecer energia limpa, sustentável e renovável para todas as regiões do Estado e do Nordeste do Brasil.
+                        </p>
+                        <p>
+                            Atenta às necessidades do mercado, e de olho num futuro de tecnologias e sustentabilidade, a <strong class="font-bold">IS Engenharia Solar</strong> amplia seu portfólio com atuação no mercado de energia solar, oferecendo soluções completas que vão desde o estudo de viabilidade, projeto elétrico e instalação de painéis e inversores, além da manutenção e gerenciamento de energia remota.
+                        </p>
+                        <p class="italic text-primary text-justify mt-8">
+                            Somos uma empresa que preza pela excelência na execução dos seus serviços. Nosso foco é garantir um serviço de atendimento e execução de qualidade.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-content-box page-break-before">
+                <div class="page-logo-header">
+                    <img src="/static/img/contratoImgTop.PNG" alt="Logo da IS Engenharia Solar" class="w-40 mx-auto" />
+                </div>
+                <div class="prose dark:prose-invert max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-primary mb-8">
+                        FOTOVOLTAICO
+                    </h2>
+                    <h2>COMO FUNCIONA O SISTEMA DE GERAÇÃO DE ENERGIA SOLAR?</h2>
+                    <div class="grid grid-cols-1 gap-8 mt-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-primary">1. CAPTAÇÃO: PAINEL SOLAR FOTOVOLTAICO</h3>
+                            <p>Com painéis de última geração, a radiação solar é absorvida e transformada em <em>energia elétrica</em>.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-primary">2. CONVERSÃO: INVERSOR</h3>
+                            <p>É o equipamento que recebe a carga produzida pelos painéis, convertendo a energia solar em energia limpa, pronta para o consumo. O inversor também controla automaticamente todo o funcionamento do <em>sistema gerador</em>.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-8 mt-8">
+                        <div>
+                            <h3 class="text-xl font-bold text-primary">3. CONSUMO</h3>
+                            <p>A energia gerada é utilizada na unidade consumidora <em>instantaneamente</em>. Caso não haja geração no momento, automaticamente passa-se a utilização da energia da rede.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-primary">4. COMPARTILHAMENTO</h3>
+                            <p>O excedente da produção, ou seja, a energia que for produzida e não utilizada, será injetada na rede da concessionária e <em>fica em estoque por 60 meses</em>. Na data específica é feita a leitura do medidor e apurado a diferença entre a energia consumida e a energia injetada.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-content-box page-break-before">
+                <div class="page-logo-header">
+                    <img src="/static/img/contratoImgTop.PNG" alt="Logo da IS Engenharia Solar" class="w-40 mx-auto" />
+                </div>
+                <div class="prose dark:prose-invert max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-primary mb-8">
+                        5. SEGURANÇA E MONITORAMENTO
+                    </h2>
+                    <p>A garantia e a manutenção são essenciais para assegurar que um 
+                        sistema fotovoltaico funcione bem e dure por muito tempo. Normalmente, 
+                        as garantias dos fabricantes cobrem os principais itens, como painéis 
+                        solares e inversores, oferecendo segurança ao cliente caso haja problemas 
+                        de fabricação ou falhas precoces. 
+                    </p>
+                </div>
+            </div>
+
+            <div class="page-content-box page-break-before">
+                <div class="page-logo-header">
+                    <img src="/static/img/contratoImgTop.PNG" alt="Logo da IS Engenharia Solar" class="w-40 mx-auto" />
+                </div>
+                <div class="prose dark:prose-invert max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-primary mb-8">
+                        NOSSOS SERVIÇOS
+                    </h2>
+                    <div class="grid grid-cols-1 gap-0 mt-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-primary">1. VISITA TÉCNICA:</h3>
+                            <p>É realizada no local da instalação para a coleta de todas as informações necessárias, anotações e medições.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-primary">2. DIMENSIONAMENTO:</h3>
+                            <p>É o processo de dimensionar o sistema fotovoltaico, levando em consideração a demanda de energia da unidade consumidora e as características do local de instalação.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-primary">3. ENGENHARIA ESPECIALIZADA:</h3>
+                            <p>Nosso departamento de engenharia inicia os trabalhos visando a futura homologação. É realizada a entrada da documentação junto à concessionária de energia elétrica.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-primary">4. EXECUÇÃO:</h3>
+                            <p>O serviço de execução segue um rigoroso padrão de qualidade, segurança e normas técnicas (ANEEL, NR10 e NR35).</p>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-primary">5. HOMOLOGAÇÃO:</h3>
+                            <p>A norma da ANEEL estabelece que a concessionária tem um prazo de 34 dias para fazer a troca do medidor comum pelo medidor bidirecional.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-content-box page-break-before">
+                <div class="page-logo-header">
+                    <img src="/static/img/contratoImgTop.PNG" alt="Logo da IS Engenharia Solar" class="w-40 mx-auto" />
+                </div>
+                <div class="prose dark:prose-invert max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-primary mb-8">
+                        1. DETALHAMENTO DO SISTEMA:
+                    </h2>
+                    <div class="overflow-x-auto not-prose mt-6">
+                        <table class="w-full text-left table-auto border dark:border-gray-600">
+                            </table>
+                    </div>
+                    <div class="flex justify-between items-center text-lg font-semibold">
+                        <span class="whitespace-nowrap text-primary ">
+                            GERADOR FOTOVOLTAICO {{ oportunidade.kwp | br_decimal }} kWp
+                        </span>
+                        {% if oportunidade.preco %}
+                            <span class="whitespace-nowrap ml-4 text-primary dark:text-primary-light">
+                                R$ {{ oportunidade.preco | br_currency }}
+                            </span>
+                        {% else %}
+                            <span class="whitespace-nowrap ml-4 text-primary dark:text-primary-light">
+                                Sem Preço Definido
+                            </span>
+                        {% endif %}
+
+                    </div>
+                    <div class="overflow-x-auto not-prose mt-6">
+                        <table class="w-full text-left table-auto border dark:border-gray-600">
+                            </table>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border border-gray-500 text-center text-sm">
+                            <thead>
+                            <tr class="bg-gray-200">
+                                <th colspan="2" class="border border-gray-500 px-4 py-2 font-semibold">
+                                GERADOR FOTOVOLTAICO
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="border border-gray-500 px-4 py-2 text-left">INVERSOR NANSEN {{oportunidade.kw}}KW</td>
+                                <td class="border border-gray-500 px-4 py-2 font-bold">{{oportunidade.inversor}}</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-500 px-4 py-2 text-left">
+                                Painel Fotovoltaico RONMA Bifacial – {{oportunidade.wpPainel}}W
+                                </td>
+                                <td class="border border-gray-500 px-4 py-2 font-bold">{{oportunidade.unidadePainel}}</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-500 px-4 py-2 text-left">
+                                STRING BOX 1000 18KA 1-2E/2S
+                                </td>
+                                <td class="border border-gray-500 px-4 py-2 font-bold">1</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-500 px-4 py-2 text-left">
+                                KIT DE ESTRUTURA (GRAMPO, PERFIS, PARAFUSOS, CABOS, ETC)
+                                </td>
+                                <td class="border border-gray-500 px-4 py-2 font-bold">1</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-500 px-4 py-2 text-left">MATERIAL AC</td>
+                                <td class="border border-gray-500 px-4 py-2 font-bold">1</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+
+            <div class="page-content-box page-break-before">
+                <div class="page-logo-header">
+                    <img src="/static/img/contratoImgTop.PNG" alt="Logo da IS Engenharia Solar" class="w-40 mx-auto" />
+                </div>
+                <div class="prose dark:prose-invert max-w-4xl mx-auto">
+                    <h3 class="text-2xl font-bold text-primary mb-8">
+                        2. DIMENSIONAMENTO DO GERADOR FOTOVOLTAICO:
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border border-gray-500 text-center text-sm">
+                            <thead>
+                            <tr class="bg-gray-200">
+                                <th colspan="2" class="border border-gray-500 px-4 py-2 font-semibold">
+                                DIMENSIONAMENTO DO GERADOR FOTOVOLTAICO
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="border border-gray-500 px-4 py-2 text-left">INVERSOR</td>
+                                <td class="border border-gray-500 px-4 py-2 font-bold">{{oportunidade.inversor}}</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-500 px-4 py-2 text-left">
+                                Painel Fotovoltaicos
+                                </td>
+                                <td class="border border-gray-500 px-4 py-2 font-bold">{{oportunidade.unidadePainel}}</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-500 px-4 py-2 text-left">
+                                Espaço Físico
+                                </td>
+                                <td class="border border-gray-500 px-4 py-2 font-bold">{{oportunidade.espacoFisico}}m²</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-500 px-4 py-2 text-left">
+                               Potência do Gerador
+                                </td>
+                                <td class="border border-gray-500 px-4 py-2 font-bold">{{ oportunidade.kwp | br_decimal }}KWp</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-primary my-1">GARANTIAS E MANUTENÇÃO:</h3>
+                        <p class="my-1">A garantia e a manutenção são essenciais para assegurar que um 
+                            sistema fotovoltaico funcione bem e dure por muito tempo. Normalmente, 
+                            as garantias dos fabricantes cobrem os principais itens, como painéis 
+                            solares e inversores, oferecendo segurança ao cliente caso haja problemas 
+                            de fabricação ou falhas precoces. 
+                        </p>
+                    </div>
+                    <strong>GARANTIA TOTAL DO FABRICANTE REFERENTE PERDAS DE EFICIÊNCIA DO 
+                        PAINEL: 
+                    </strong>
+                    <ul class="list-disc ml-6">
+                        <li>12 anos com 90% da potência de saída</li>
+                        <li>25 anos com 80% da potência de saída</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="page-content-box page-break-before">
+                <div class="page-logo-header">
+                    <img src="/static/img/contratoImgTop.PNG" alt="Logo da IS Engenharia Solar" class="w-40 mx-auto" />
+                </div>
+                <div class="prose dark:prose-invert max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-primary mb-8">
+                        CERTIFICAÇÕES E PAGAMENTO
+                    </h2>
+                    <div>
+                        <h3 class="text-xl font-bold text-primary">CERTIFICAÇÃO DE PAINEIS IMPORTADOS:</h3>
+                        <img src="/static/img/contratoLogoInter.png" alt="">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-primary">CERTIFICAÇÃO DE PAINEIS NACIONAIS:</h3>
+                        <img src="/static/img/contratoLogoNaci.png" alt="">
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-primary">CONDIÇÕES DE PAGAMENTO: </h3>
+                        <p>O custo total do sistema sugerido é de R$ {{ oportunidade.preco | br_currency }} à vista. 
+                            Disponibilizamos diversas opções de pagamento, como parcelamento e 
+                            financiamento com condições vantajosas. Entre em contato para saber 
+                            mais sobre nossas ofertas
+                        </p>
+                        <p>• Financiamento em até 84x - Parcelamento variável de acordo com cada 
+                            CPF.
+                        </p>
+                        <p>
+                            • Cartão de crédito {{ oportunidade.juros }}x de R$ 
+                            {% if (oportunidade.valorParcela | default(0) | float) == 0 %}
+                                0,00
+                            {% else %}
+                                {{ oportunidade.valorParcela | br_currency }}
+                            {% endif %}
+                            sem juros.
+                        </p>
+                    </div>
+                    <div class="text-right mt-4 my-8">
+                        <p>Essa proposta tem validade de 05 dias.</p>
+                        {% if oportunidade.datacad %}
+                            {% set meses = [
+                                '', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                            ] %}
+                            {% set data_completa = oportunidade.datacad.split(' ')[0] %}
+                            {% set partes = data_completa.split('-') %}
+                            {% set indice_mes = partes[1] | int %}
+                            {% set mes_por_extenso = meses[indice_mes] %}
+
+                            <p>Caraúbas/RN, {{ partes[2] }} de {{ mes_por_extenso }} de {{ partes[0] }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </main>
+    
+    <div class="w-[794px] mx-auto flex justify-end gap-4 p-4 mt-8 bg-background-light dark:bg-gray-800 rounded-lg shadow-xl print:hidden">
+        
+        <a 
+            href="#" 
+            onclick="window.close(); return false;"
+            class="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-6 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        >
+            Voltar
+        </a>
+
+        <a
+            href="{{ url_for('preview_proposta', oportunidade_id=oportunidade.id) }}?imprimir=1"
+            class="bg-primary text-white font-bold py-3 px-6 rounded-full hover:bg-opacity-90 transition-colors shadow-lg"
+        >
+            Imprimir
+        </a>
+    </div>
+    <script>
+
+        {% if imprimir_agora %}
+            window.onload = function() {
+                window.print();
+
+                if (window.history.replaceState) {
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('imprimir');
+                    window.history.replaceState({path: url.href}, '', url.href);
+                }
+            };
+        {% endif %}
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const autorizado = document.body.dataset.impressaoAutorizada === '1';
+
+            // Bloqueia Ctrl+P e Cmd+P
+            document.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+                e.preventDefault();
+                alert('⚠️ Para imprimir corretamente, use o botão \"Imprimir\" da página.');
+            }
+            });
+
+            // Intercepta tentativa de imprimir fora do botão
+            window.addEventListener('beforeprint', () => {
+            if (!autorizado) {
+                document.body.innerHTML = `
+                <div style="font-family:sans-serif;text-align:center;margin-top:40vh;color:red;">
+                    <strong>IMPRESSÃO BLOQUEADA</strong><br>
+                    Use o botão 'Imprimir' da página.
+                </div>`;
+            }
+            });
+        });
+    </script>
+</body>
+
+</html>

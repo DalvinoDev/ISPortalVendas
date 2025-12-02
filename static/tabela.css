@@ -1,0 +1,169 @@
+/* tabela.css - Estilos específicos para páginas com tabelas e listagens */
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f1f5f9;
+  color: #333;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.login-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.password-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.table-header {
+  font-weight: bold;
+  color: #374151;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.label-mobile {
+  display: none;
+  font-weight: bold;
+  margin-right: 6px;
+  color: #6b7280;
+}
+
+.button {
+  padding: 6px 12px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.button:hover {
+  background-color: #2563eb;
+}
+
+.estado {
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.estado.aberto {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.estado.criado {
+  background-color: #fef9c3;
+  color: #92400e;
+}
+
+.estado.processamento {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+
+.estado.fechado {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.estado.pendente {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.paginacao {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.paginacao a {
+  padding: 10px 16px;
+  background-color: #3b82f6;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  width: 120px;
+  text-align: center;
+  transition: background 0.3s;
+}
+
+.paginacao a:hover {
+  background-color: #2563eb;
+}
+
+@media (max-width: 500px) {
+  .password-group {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .table-header {
+    display: none;
+  }
+
+  .label-mobile {
+    display: inline;
+  }
+
+  .paginacao a {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .button {
+    margin-top: 4px;
+    padding: 8px 16px;
+    width: 100%;
+    text-align: center;
+  }
+}
+@media (min-width: 1024px) {
+  .login-box {
+    padding: 3rem;
+  }
+
+  .login-box h2 {
+    font-size: 1.75rem;
+  }
+}

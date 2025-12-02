@@ -1,0 +1,63 @@
+{% if mensagem %}
+<div class="toast {{ tipo }}" onclick="fecharToast(this)">
+  <p>{{ mensagem }}</p>
+</div>
+<script>
+  // Função para fechar o toast ao clicar
+  function fecharToast(toast) {
+    toast.classList.add('fechando');
+    setTimeout(() => toast.remove(), 300); // tempo da animação de saída
+  }
+
+  // Fechar automaticamente após 5 segundos
+  setTimeout(() => {
+    const toast = document.querySelector('.toast');
+    if (toast) fecharToast(toast);
+  }, 5000);
+</script>
+{% endif %}
+
+<style>
+.toast {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  background-color: #333;
+  color: #fff;
+  border-radius: 12px;
+  z-index: 1100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Segoe UI", sans-serif;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: slideIn 0.4s forwards;
+}
+
+.toast.sucesso { background-color: #4CAF50; }
+.toast.erro    { background-color: #F44336; }
+.toast.alerta  { background-color: #FF9800; }
+
+.toast p {
+  margin: 0;
+  font-size: 15px;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.toast.fechando {
+  animation: fadeOut 0.3s forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-20px); }
+}
+</style>

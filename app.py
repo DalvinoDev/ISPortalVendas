@@ -434,6 +434,7 @@ def nova_oportunidade():
         veio_continuar=veio_continuar,
         oportunidade=oportunidade_existente,
         cliente_selecionado=cliente_selecionado,
+        sheets=sheets,
         active_page='minhas_opp'
     )
 
@@ -614,7 +615,8 @@ def preview_proposta(oportunidade_id):
                            oportunidade=oportunidade,
                            cliente=cliente,
                            imprimir_agora=imprimir_agora,
-                           debug = True)
+                           #debug = False
+                           )
 
 @app.route('/proposta/pdf/<string:oportunidade_id>')
 def gerar_pdf_proposta(oportunidade_id):

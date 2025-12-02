@@ -283,8 +283,19 @@ def salvar_oportunidade(dados_opp):
     """
     Salva uma nova oportunidade a partir de um dicionário de dados.
     """
-    kwpFormatado = ajustar_escala(dados_opp.get("kwp"),100)
-    valorParcelaFormatado = ajustar_escala(dados_opp.get("valorParcela"),100)
+    # Os valores na planilha agora estão no formato americano (reais / floats).
+    # Não aplicar escala automática por 100 — usar os valores conforme enviados.
+    # Ainda tentamos converter strings numéricas para float quando possível.
+    def _as_number(v):
+        if v is None or v == "":
+            return v
+        try:
+            return float(v)
+        except Exception:
+            return v
+
+    kwpFormatado = _as_number(dados_opp.get("kwp"))
+    valorParcelaFormatado = _as_number(dados_opp.get("valorParcela"))
     id, codigo = auth.gerar_identificador("oportunidade")
     # A ordem aqui é CRUCIAL, pois deve bater com a ordem das colunas na planilha.
     # Usamos .get() para evitar erros caso uma chave não exista,

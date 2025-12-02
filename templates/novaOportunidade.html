@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nova Oportunidade</title>
+
+  <!-- Tailwind + configuração de tema -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <script src="/static/js/tailwind-config.js"></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/static/img/favoriteIcon.png">
+  <link rel="apple-touch-icon" href="/static/img/favoriteIcon.png">
+
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+
+  {% include "notificacao.html" %}
+  {% include "loading.html" %}
+  {% include "header.html" %}
+
+  <div class="w-full">
+    <!-- Cabeçalho com logo -->
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 md:p-6">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <img alt="Logotipo da empresa" class="h-16" src="/static/img/logo 1.png" />
+        <h1 class="text-2xl md:text-3xl font-bold text-center flex-1">
+          {% if veio_continuar %}
+            Continuar Oportunidade
+          {% else %}
+            Nova Oportunidade
+          {% endif %}
+        </h1>
+        <div class="w-16"></div>
+      </div>
+    </div>
+
+    <!-- Seção principal com catálogo e formulário -->
+    <main class="w-full p-4 md:p-6">
+      <div class="max-w-7xl mx-auto">
+        
+        <!-- Sessão de criação normal (com catálogo) -->
+        <section id="sessaoNova" {% if veio_continuar %}class="hidden"{% endif %}>
+        
+          <!-- Cliente Selecionado (se houver) -->
+          {% if cliente_selecionado %}
+            <div class="mb-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800">
+              <p class="text-sm text-blue-600 dark:text-blue-300 font-semibold">Cliente selecionado</p>
+              <p class="text-lg font-bold text-gray-900 dark:text-white">{{ cliente_selecionado.nome }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-300">{{ cliente_selecionado.email }}</p>
+            </div>
+          {% endif %}
+          <!-- Catálogo removido: retorno ao fluxo com apenas dropdowns -->
+          <div class="mb-6 max-w-2xl mx-auto text-center">
+            <p class="text-sm text-gray-600 dark:text-gray-300">Selecione a categoria (KWh) abaixo para preencher os detalhes da oportunidade.</p>
+          </div>
+
+          <!-- Formulário compacto -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 max-w-2xl mx-auto">
+            <form method="POST" action="{{ url_for('cadastrar_oportunidade') }}" class="space-y-4">
+              {% if not veio_continuar %}
+                <h3 class="text-xl font-bold mb-4">Detalhes da Oportunidade</h3>
+              {% endif %}
+              <input type="hidden" name="nome" value="{{ nome }}">
+            <input type="hidden" name="email" value="{{ email }}">
+            <input type="hidden" name="modo" value="novo">
+            <input type="hidden" id="valorReal" name="valorReal">
+            <input type="hidden" id="potenciaReal" name="potenciaReal">
+
+            <!-- Categoria -->
+            <div id="categoriaContainer">
+              <label for="categoria" class="sr-only">Categoria</label>
+              <select
+                id="categoria"
+                name="categoria"
+                class="border-none w-full px-4 py-3 bg-input-light dark:bg-input-dark text-foreground-light dark:text-foreground-dark rounded-full focus:ring-primary focus:ring-2"
+                required
+              >
+                <option value="" selected disabled>Selecione o KWh</option>
+                {% for item in categorias %}
+                  <option value="{{ item.potencia }}" data-valor="{{ item.preco }}">{{ item.potencia }}</option>
+                {% endfor %}
+                <option value="Outros" data-valor="">Outros</option>
+              </select>
+            </div>
+
+            <!-- Valor -->
+            <div>
+              <input
+                id="valor"
+                name="valor"
+                type="text"
+                placeholder="Valor estimado*"
+                readonly
+                required
+                class="border-none w-full px-4 py-3 bg-input-light dark:bg-input-dark text-foreground-light dark:text-foreground-dark rounded-full focus:ring-primary focus:ring-2"
+              />
+            </div>
+
+            <!-- Descrição -->
+            <div>
+              <textarea
+                id="descricao"
+                name="descricao"
+                placeholder="Descrição"
+                maxlength="255"
+                rows="4"
+                class="border-none w-full px-4 py-3 bg-input-light dark:bg-input-dark text-foreground-light dark:text-foreground-dark rounded-2xl focus:ring-primary focus:ring-2 resize-none"
+              ></textarea>
+              <p class="text-sm text-gray-500 mt-1">
+                Caracteres: <span id="contadorDescricao">0</span>/255
+              </p>
+            </div>
+
+
+            <!-- Botão -->
+            <button
+              type="submit"
+              class="w-full bg-primary text-white font-bold py-3 px-4 rounded-full hover:bg-opacity-90 transition-colors"
+            >
+              Salvar
+            </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Sessão de continuação (readonly) -->
+        <section id="sessaoContinuar" {% if not veio_continuar %}class="hidden"{% endif %}>
+          <form method="POST" action="{{ url_for('cadastrar_oportunidade') }}" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="nome" value="{{ oportunidade.nome or nome }}">
+            <input type="hidden" name="email" value="{{ oportunidade.email or email }}">
+            <input type="hidden" name="modo" value="continuar">
+            <input type="hidden" name="email" value="{{ oportunidade.email }}">
+            <input type="hidden" name="nome" value="{{ oportunidade.nome }}">
+
+            <!-- Campos apenas de exibição -->
+            <input type="text" readonly value="{{ oportunidade.nome }}" class="w-full px-4 py-3 rounded-full bg-gray-100 dark:bg-gray-800 border-0 "/>
+            <input type="text" readonly value="{{ oportunidade.potencia }} KWh" class="w-full px-4 py-3 rounded-full bg-gray-100 dark:bg-gray-800 border-0 "/>
+            <input type="text" readonly value="R$ {{ oportunidade.valor }}" class="w-full px-4 py-3 rounded-full bg-gray-100 dark:bg-gray-800 border-0 "/>
+            <textarea readonly rows="4" class="w-full px-4 py-3 rounded-2xl bg-gray-100 dark:bg-gray-800 border-0 ">{{ oportunidade.descricao }}</textarea>
+
+            <!-- Upload do contrato ou documento principal -->
+            <div>
+              <label for="arquivo" class="block text-sm text-gray-600 dark:text-gray-300 mb-1">
+                Anexar documento principal*
+              </label>
+              <input 
+                id="arquivo" 
+                name="arquivo" 
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                required
+                class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-primary file:text-white hover:file:bg-opacity-90 cursor-pointer"/>
+            </div>
+
+            <!-- Upload do comprovante de energia -->
+            <div>
+              <label for="conta_energia" class="block text-sm text-gray-600 dark:text-gray-300 mb-1">
+                Anexar comprovante de energia*
+              </label>
+              <input 
+                id="conta_energia" 
+                name="conta_energia" 
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                required
+                class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-primary file:text-white hover:file:bg-opacity-90 cursor-pointer"/>
+            </div>
+            <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-full">
+              Enviar Anexo
+            </button>
+          </form>
+        </section>
+      </div>
+</main>
+
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const categoriaSelect = document.getElementById('categoria');
+    const valorInput = document.getElementById('valor');
+    const potenciaInput = document.getElementById('potencia'); // agora existe no HTML
+    const descricaoInput = document.getElementById('descricao');
+    const contador = document.getElementById('contadorDescricao');
+
+    // Atualiza contador de caracteres do textarea
+    descricaoInput.addEventListener('input', () => {
+      contador.textContent = descricaoInput.value.length;
+    });
+
+    // Função para formatar moeda brasileira
+    function formatarMoeda(valor) {
+      if (valor === null || valor === undefined || valor === '') return '';
+      // tentar converter para número de forma segura
+      const num = Number(String(valor).replace(',', '.'));
+      if (Number.isNaN(num)) return '';
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(num);
+    }
+
+    // Função para formatar potência com sufixo kWh
+    function formatarPotencia(valor) {
+      if (!valor) return '';
+      return `${valor} kWh`;
+    }
+    // Evento de mudança na categoria
+    categoriaSelect.addEventListener('change', () => {
+      const selectedOption = categoriaSelect.options[categoriaSelect.selectedIndex];
+      const valor = selectedOption.getAttribute('data-valor') || '';
+      const potencia = selectedOption.value || '';
+
+      // Atualiza os campos ocultos com os valores reais (esses existem no seu form)
+      document.getElementById('valorReal').value = valor;
+      document.getElementById('potenciaReal').value = potencia;
+
+      if (selectedOption.value === 'Outros') {
+        valorInput.value = '';
+        valorInput.readOnly = true;
+
+        if (potenciaInput) {
+          potenciaInput.value = '';
+          potenciaInput.readOnly = true;
+        }
+
+        descricaoInput.required = true;
+        descricaoInput.placeholder = "Descrição obrigatória para 'Outros'";
+        descricaoInput.classList.add('ring-2', 'ring-red-500');
+      } else {
+        // Exibe valor formatado (campo text)
+        valorInput.value = formatarMoeda(valor);
+        valorInput.readOnly = true;
+
+        if (potenciaInput) {
+          potenciaInput.value = formatarPotencia(potencia);
+          potenciaInput.readOnly = true;
+        }
+
+        descricaoInput.required = false;
+        descricaoInput.placeholder = "Descrição";
+        descricaoInput.classList.remove('ring-2', 'ring-red-500');
+      }
+    });
+  });
+</script>
+</body>
+</html>
+
+<script src="/static/js/script.js" defer></script>
+
+</body>
+</html>
+

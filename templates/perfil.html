@@ -1,0 +1,76 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Perfil do Usuário</title>
+
+  <!-- Tailwind + configuração de tema -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <script src="/static/js/tailwind-config.js"></script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/static/img/favoriteIcon.png">
+  <link rel="apple-touch-icon" href="/static/img/favoriteIcon.png">
+
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet"/>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display">
+
+  {% include "notificacao.html" %}
+  {% include "loading.html" %}
+  {% include "header.html" %}
+
+  <div class="max-w-3xl mx-auto px-4 py-8">
+
+    <!-- Cabeçalho -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 flex flex-col items-center gap-4 mb-8">
+      <img
+        src="https://ui-avatars.com/api/?name={{ usuario.nome | urlencode }}&background=0D8ABC&color=fff&size=128"
+        alt="Avatar"
+        class="rounded-full w-24 h-24 object-cover shadow"
+      >
+      <div class="text-center">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+          {{ usuario.nome }} {{ usuario.sobrenome }}
+        </h1>
+        <p class="text-gray-500 dark:text-gray-400">{{ usuario.email }}</p>
+      </div>
+    </div>
+
+    <!-- Informações -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 space-y-3 gap-4 mb-8">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Informações da Conta</h2>
+      <p class="text-gray-600 dark:text-gray-300"><strong>Nome:</strong> {{ usuario.nome }}</p>
+      <p class="text-gray-600 dark:text-gray-300"><strong>Sobrenome:</strong> {{ usuario.sobrenome }}</p>
+      <p class="text-gray-600 dark:text-gray-300"><strong>Email:</strong> {{ usuario.email }}</p>
+      <p class="text-gray-600 dark:text-gray-300"><strong>Cidade:</strong> {{ usuario.cidade }}</p>
+      <p class="text-gray-600 dark:text-gray-300"><strong>Telefone:</strong> {{ usuario.telefone }}</p>
+      <p class="text-gray-600 dark:text-gray-300"><strong>Status:</strong>
+        {% if usuario.ativo == "TRUE" or usuario.ativo == True %}
+          <span class="text-green-500 font-semibold">Ativo</span>
+        {% else %}
+          <span class="text-red-500 font-semibold">Inativo</span>
+        {% endif %}
+      </p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 space-y-3">
+      <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Carteira</h2>
+      <p class="text-gray-600 dark:text-gray-300"><strong>Saldo:</strong> R$
+            {% if usuario.saldo == 0 %}
+                0,00
+            {% else %}
+                {{ "%.2f"|format(usuario.saldo / 100) | replace('.', ',') }}
+            {% endif %}
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>
+{% endblock %}

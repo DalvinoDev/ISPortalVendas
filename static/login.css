@@ -1,0 +1,213 @@
+
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fc;
+  display: flex;
+  flex-direction: column;
+  min-width: 320px;
+  width: 100%;
+}
+
+main.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: #f8f9fc;
+  min-width: 360px;
+  max-width: 100%;
+  padding: 1rem;
+  margin: 0 auto;
+  width: 400px;
+}
+
+.login-box {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.login-box img {
+  max-width: 120px;
+  margin-bottom: 1rem;
+}
+
+.login-box h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.custom-input-file {
+  margin-bottom: 15px;
+  font-size: 14px;
+  background-color: #008cba;
+  color: white;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;  
+  transition: background 0.3s;
+}
+
+.custom-input-file:hover {
+  background-color: #006f98;
+}
+
+.password-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.captcha-placeholder {
+  border: 1px dashed #ccc;
+  padding: 15px;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.button {
+  background-color: #008cba;
+  color: white;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.button:hover {
+  background-color: #006f98;
+}
+
+.button:disabled {
+  background-color: #5a5a5a;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.signup-text a {
+  color: #008cba;
+  text-decoration: none;
+}
+
+.botao-voltar {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.botao-voltar:hover {
+  background-color: #0056b3;
+}
+
+#arquivo {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+#mensagemErro {
+  color: red !important;
+}
+
+.estado {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.estado.criado {
+  color: white;
+  background-color: #007bff;
+}
+
+.estado.concluido {
+  color: white;
+  background-color: #28a745;
+}
+
+.estado.cancelado {
+  color: white;
+  background-color: #dc3545;
+}
+
+.estado.processamento {
+  color: black;
+  background-color: #ffc107;
+}
+/* Responsivo */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 1rem;
+  }
+
+  .input-group input {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+
+  .button {
+    font-size: 1rem;
+  }
+}
+@media (min-width: 1024px) {
+  .login-box {
+    padding: 3rem;
+  }
+
+  .login-box h2 {
+    font-size: 1.75rem;
+  }
+}
